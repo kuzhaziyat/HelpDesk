@@ -14,31 +14,23 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('first_name', 'last_name', 'oname', 'phone_number','email')
         }),
         ('Место работы', {
-            'fields': ('department','post')
+            'fields': ('department','group')
         }),
         ('Права доступа', {
             'fields': (
                 'is_active',
-                'groups', 
                 )
         }),
-        ('Важные даты', {
-            'fields': ('last_login', 'date_joined')
-        }),
     )
+    
     def save_model(self, request, obj, form,change):
         if form.is_valid():
-            # if(obj.post == 'director'):
-            #     group = Group.objects.get(name='Директор') 
-            #     group.user_set.add(obj.id)
-            #     obj.save()
             if obj.is_active:
                 obj.is_staff = True
                 obj.save()   
             else:
                 obj.is_staff = False
                 obj.save()
-
 
 class DepartmentInlane(admin.TabularInline):
     model = Department

@@ -17,14 +17,14 @@ class User(AbstractUser):
     phone_number = models.CharField(validators=[phone_regex], max_length = 17, blank = True, verbose_name = "Телефон") 
     оrganization = models.ForeignKey('Organization',on_delete=models.PROTECT,verbose_name = "Организация",default = '',null=True)
     department = models.ForeignKey('Department',on_delete=models.PROTECT,verbose_name = "Отдел", default = '',null=True)
-    post = models.CharField(choices=POST_CHOICES, default = 'worker')
+    group = models.OneToOneField('auth.Group', unique=True, on_delete=models.PROTECT,related_name='+',null=True,verbose_name = "Должность")
 
     def __str__(self):
         return (self.last_name + ' ' 
                 + self.first_name + ' ' 
                 + self.oname 
                 )
-    class Meta:
+    class Meta: 
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'    
 
