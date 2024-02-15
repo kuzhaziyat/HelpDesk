@@ -5,7 +5,7 @@ from colorfield.fields import ColorField
 class Task(models.Model):
     name = models.CharField('Тема',max_length= 255)
     description = models.TextField('Описание',max_length= 255,blank=True)
-    requester = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Отправитель", related_name= 'task_requester',limit_choices_to={'is_active': True})
+    requester = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Отправитель", related_name= 'task_requester'   ,limit_choices_to={'is_active': True})
     еxecutor = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Ответственный", related_name= 'task_executor',blank=True,null=True,limit_choices_to={'is_active': True})
     оrganization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True)
     division = models.ForeignKey(userModel.Division,on_delete=models.PROTECT,verbose_name = "Подразделение", null=True)

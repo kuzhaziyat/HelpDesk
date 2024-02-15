@@ -4,10 +4,6 @@ from django import forms
 
 from .models import *
 
-<<<<<<< HEAD
-
-=======
->>>>>>> e79d23115a47bde3304ac22fd24fba651f3a233c
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
@@ -43,9 +39,6 @@ class CustomUserAdmin(UserAdmin):
                 obj.is_staff = False
                 obj.save()
 
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    pass
 
 class DepartmentInlane(admin.TabularInline):
     model = Department
@@ -54,7 +47,6 @@ class DepartmentInlane(admin.TabularInline):
     fields = ('name','description','is_active')
     show_change_link = True
 
-<<<<<<< HEAD
 class DivisionInlane(admin.TabularInline):
     model = Division
     extra = 0
@@ -62,8 +54,6 @@ class DivisionInlane(admin.TabularInline):
     fields = ('name','description','is_active')
     show_change_link = True    
 
-=======
->>>>>>> e79d23115a47bde3304ac22fd24fba651f3a233c
 @admin.register(Division)
 class DivisionAdmin(admin.ModelAdmin):
     can_delete = False
@@ -83,24 +73,15 @@ class DepartmentAdmin(admin.ModelAdmin):
             'fields': ('name','description','is_active','division')
         }),
     )
-<<<<<<< HEAD
     
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-=======
-
-@admin.register(Post)
-class PostAdmin(admin.ModelAdmin):
->>>>>>> e79d23115a47bde3304ac22fd24fba651f3a233c
     can_delete = False
     user_fieldsets = (
         (None, {
             'fields': ('name','description','is_active','division')
         }),
     )
-<<<<<<< HEAD
     inlines = [DivisionInlane]
     
-=======
 
->>>>>>> e79d23115a47bde3304ac22fd24fba651f3a233c
