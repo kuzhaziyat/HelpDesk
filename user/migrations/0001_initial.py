@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='division',
-            name='оrganization',
+            name='organization',
             field=models.ForeignKey(default='', null=True, on_delete=django.db.models.deletion.PROTECT, to='user.organization', verbose_name='Организация'),
         ),
         migrations.CreateModel(
@@ -82,7 +82,7 @@ class Migration(migrations.Migration):
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
                 ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
                 ('department', models.ForeignKey(default='', null=True, on_delete=django.db.models.deletion.PROTECT, to='user.department', verbose_name='Отдел')),
-                ('оrganization', models.ForeignKey(default='', null=True, on_delete=django.db.models.deletion.PROTECT, to='user.organization', verbose_name='Организация')),
+                ('organization', models.ForeignKey(default='', null=True, on_delete=django.db.models.deletion.PROTECT, to='user.organization', verbose_name='Организация')),
             ],
             options={
                 'verbose_name': 'Пользователь',

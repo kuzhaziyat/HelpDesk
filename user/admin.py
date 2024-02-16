@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('first_name', 'last_name', 'oname', 'phone_number','email')
         }),
         ('Место работы', {
-            'fields': ('department','group')
+            'fields': ('organization','department','group')
         }),
         ('Права доступа', {
             'fields': (
@@ -22,9 +22,10 @@ class CustomUserAdmin(UserAdmin):
                 )
         }),
     )
-    
+
     def save_model(self, request, obj, form,change):
         if form.is_valid():
+            
             if obj.is_active:
                 obj.is_staff = True
                 obj.save()   

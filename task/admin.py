@@ -32,7 +32,7 @@ class TaskAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'color_status','color_priority')
 
-    readonly_fields = ['created_date','updated_date','status','date_fact_completion','requester']
+    readonly_fields = ['created_date','status','updated_date','date_fact_completion','requester']
     fieldsets  = (
         (None,{
             'fields': [ 
@@ -45,7 +45,7 @@ class TaskAdmin(admin.ModelAdmin):
         ('Дополнительные поля',{
             'fields': [ 
                         ('requester','еxecutor'),             
-                        ('file_task'),
+                        ('file_task','organization'),
                         ('created_date','updated_date','date_fact_completion'), 
                        ]
         })
@@ -87,9 +87,11 @@ class TaskAdmin(admin.ModelAdmin):
                 return False
     
     def save_model(self, request, obj, form, change):
+        print(request.user.organization)
         if form.is_valid() and not obj.id:
-            obj.status = 'Не взят в работу'
+            obj.status = Status(id = 4)
             obj.requester = request.user
+            obj.organization = request.user.organization
             obj.save()
         super().save_model(request, obj, form, change)
 
@@ -97,7 +99,14 @@ class TaskAdmin(admin.ModelAdmin):
     #     if request.user.is_superuser:
     #         return super(TaskAdmin, self).get_fieldsets(request, obj)
     #     return self.user_fieldsets   
-        
+
+    def get_queryset(self, request):
+        if request.user.is_superuser:
+            return super(TaskAdmin, self).get_queryset(request)
+        else:
+            qs = super(TaskAdmin, self).get_queryset(request)
+            return qs.filter(organization=request.user.organization)
+
     inlines = [CommentInlane]
 
 @admin.register(TypeTask)

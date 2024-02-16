@@ -7,7 +7,7 @@ class Task(models.Model):
     description = models.TextField('Описание',max_length= 255,blank=True)
     requester = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Отправитель",blank=True,null=True, related_name= 'task_requester'   ,limit_choices_to={'is_active': True})
     еxecutor = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Ответственный", related_name= 'task_executor',blank=True,null=True,limit_choices_to={'is_active': True})
-    оrganization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True)
+    organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True,related_name= 'task_org')
     division = models.ForeignKey(userModel.Division,on_delete=models.PROTECT,verbose_name = "Подразделение", null=True)
     department = models.ForeignKey(userModel.Department,on_delete=models.PROTECT,verbose_name = "Отдел",blank=True, null=True)
     typeTask = models.ForeignKey('TypeTask',on_delete=models.PROTECT,verbose_name = "Тип заявки", null=True)#
@@ -21,12 +21,16 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
+    
     class Meta:
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'
 
 class TypeTask(models.Model):
     name = models.CharField('Название')
+    organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True)
+
+
     def __str__(self):
         return self.name
     class Meta:
@@ -36,9 +40,11 @@ class TypeTask(models.Model):
 class Status(models.Model):
     name = models.CharField('Название')
     color = ColorField(format="rgb")
+    organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True)
 
     def __str__(self):
         return self.name
+    
     class Meta:
         verbose_name = 'Статус заявки'
         verbose_name_plural = 'Статусы заявок'
@@ -46,6 +52,7 @@ class Status(models.Model):
 class Priority(models.Model):
     name = models.CharField('Название')
     color = ColorField(format="rgb")
+    organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True)
 
     def __str__(self):
         return self.name
