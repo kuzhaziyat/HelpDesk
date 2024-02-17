@@ -39,7 +39,7 @@ class TaskAdmin(admin.ModelAdmin):
                         ('name', 'description'),
                         ('typeTask','status'),
                         ('priority', 'date_plan'),
-                        ('division','department'), 
+                        ('department'), 
                        ]
         }),
         ('Дополнительные поля',{

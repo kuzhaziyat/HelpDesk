@@ -40,30 +40,12 @@ class DepartmentInlane(admin.TabularInline):
     fields = ('name','description','is_active')
     show_change_link = True
 
-class DivisionInlane(admin.TabularInline):
-    model = Division
-    extra = 0
-    can_delete = False
-    fields = ('name','description','is_active')
-    show_change_link = True    
-
-@admin.register(Division)
-class DivisionAdmin(admin.ModelAdmin):
-    can_delete = False
-
-    user_fieldsets = (
-        (None, {
-            'fields': ('name','description','is_active')
-        }),
-    )
-    inlines = [DepartmentInlane]
-    
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     can_delete = False
     user_fieldsets = (
         (None, {
-            'fields': ('name','description','is_active','division')
+            'fields': ('name','description','is_active')
         }),
     )
     
@@ -72,9 +54,9 @@ class OrganizationAdmin(admin.ModelAdmin):
     can_delete = False
     user_fieldsets = (
         (None, {
-            'fields': ('name','description','is_active','division')
+            'fields': ('name','description','is_active')
         }),
     )
-    inlines = [DivisionInlane]
+    inlines = [DepartmentInlane]
     
 
