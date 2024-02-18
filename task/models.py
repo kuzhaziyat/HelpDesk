@@ -2,14 +2,19 @@ from django.db import models
 from user import models as userModel
 from colorfield.fields import ColorField
 STATUS_CHOISEC = [
-    ("TS", "Задача поставлена"),
-    ("SW", "Отправлена на доработку"),
-    ("JR", "Принято в работу"),
-    ("SR", "Senior"),
-    ("GR", "Graduate")
+    ("Zapl", "Запланирована"),
+    ("Prin", "Принята к исполнению"),
+    ("Vipol", "Выполнена"),
+    ("Canceled", "Отменена"),
+    ("Control", "На контроле"),
+    ("Return", "Возвращена"),
+    ("Control", "Проконтролирована"),
 ]
-
-
+SOSTOYAN_CHOISEC = [
+    ("Opened", "Открыта"),
+    ("InWork", "В работе"),
+    ("Closed", "Закрыта"),
+]
 
 class Task(models.Model):
     name = models.CharField('Тема',max_length= 255)
@@ -19,7 +24,8 @@ class Task(models.Model):
     organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True,related_name= 'task_org')
     department = models.ForeignKey(userModel.Department,on_delete=models.PROTECT,verbose_name = "Отдел",blank=True, null=True)
     typeTask = models.ForeignKey('TypeTask',on_delete=models.PROTECT,verbose_name = "Тип заявки", null=True)#
-    status = models.CharField(max_length=3, choices=STATUS_CHOISEC)
+    status = models.CharField(max_length=8, choices=STATUS_CHOISEC,blank=True)
+    sostoyan = models.CharField(max_length=8, choices=STATUS_CHOISEC,blank=True)
     priority = models.ForeignKey('Priority',on_delete=models.PROTECT,verbose_name = "Приоритет заявки", null=True)#
     created_date = models.DateTimeField('Дата создания',auto_now_add=True)
     updated_date = models.DateTimeField('Дата обновления',auto_now=True)

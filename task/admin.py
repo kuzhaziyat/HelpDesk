@@ -1,3 +1,4 @@
+@ -1,145 +0,0 @@
 from typing import Any
 from django.contrib import admin
 from .models import *
