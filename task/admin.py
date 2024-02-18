@@ -3,6 +3,8 @@ from django.contrib import admin
 from .models import *
 from user import models as userModel
 from django.utils.html import format_html
+from django.db.models import Q
+
 
 class CommentInlane(admin.TabularInline):
     model = Comments
@@ -25,7 +27,7 @@ class TaskAdmin(admin.ModelAdmin):
 
     color_priority.allow_tags = True
 
-    list_display = ('name','color_priority')
+    list_display = ('name','typeTask','status','sostoyan','color_priority','department','date_plan')
 
     readonly_fields = ['created_date','status','sostoyan','updated_date','date_fact_completion','requester']
     fieldsets  = (
@@ -51,11 +53,6 @@ class TaskAdmin(admin.ModelAdmin):
         })
     )
     inlines = [CommentInlane]
-
-    def imports(modeladmin, request, queryset):
-        print("Imports button pushed")
-
-    changelist_actions = ('imports', )
 
     def formfield_for_dbfield(self, *args, **kwargs):
         formfield = super().formfield_for_dbfield(*args, **kwargs)
@@ -104,11 +101,11 @@ class TaskAdmin(admin.ModelAdmin):
     #     return self.user_fieldsets   
 
     def get_queryset(self, request):
-        if request.user.is_superuser:
-            return super(TaskAdmin, self).get_queryset(request)
-        else:   
-            qs = super(TaskAdmin, self).get_queryset(request)
-            return qs.filter(organization=request.user.organization)
+        # if request.user.is_superuser:
+        #     return super(TaskAdmin, self).get_queryset(request)
+        # else:   
+        qs = super(TaskAdmin, self).get_queryset(request)
+        return qs.filter(Q(organization=request.user.organization) | Q(requester=request.user))
 
     inlines = [CommentInlane]
 
