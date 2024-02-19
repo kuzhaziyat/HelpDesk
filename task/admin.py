@@ -111,10 +111,9 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(TypeTask)
 class TypeTaskAdmin(admin.ModelAdmin):
-    readonly_fields = ['organization']
     user_fieldsets = (
         (None, {
-            'fields': ('name')
+            'fields': [('name')]
         }),
     )
     def save_model(self, request, obj, form,change):
