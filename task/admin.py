@@ -4,7 +4,7 @@ from .models import *
 from user import models as userModel
 from django.utils.html import format_html
 from django.db.models import Q
-
+from django.http import HttpResponseRedirect
 
 class CommentInlane(admin.TabularInline):
     model = Comments
@@ -17,7 +17,19 @@ class CommentInlane(admin.TabularInline):
     
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
+    change_form_template = "task/taskadmin_change_form.html"
+
     read_only_fields = True
+
+    def response_change(self, request, obj):
+        if "_make-unique" in request.POST:
+            matching_names_except_this = self.get_queryset(request).filter(name=obj.name).exclude(pk=obj.id)
+            matching_names_except_this.delete()
+            obj.is_unique = True
+            obj.save()
+            self.message_user(request, "This villain is now unique")
+            return HttpResponseRedirect(".")
+        return super().response_change(request, obj)
 
     def color_priority(self, obj):
         if obj.priority:
