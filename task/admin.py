@@ -22,10 +22,8 @@ class TaskAdmin(admin.ModelAdmin):
     read_only_fields = True
 
     def response_change(self, request, obj):
-        if "_make-unique" in request.POST:
-            matching_names_except_this = self.get_queryset(request).filter(name=obj.name).exclude(pk=obj.id)
-            matching_names_except_this.delete()
-            obj.is_unique = True
+        if "_prin" in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
             obj.save()
             self.message_user(request, "This villain is now unique")
             return HttpResponseRedirect(".")
@@ -76,6 +74,12 @@ class TaskAdmin(admin.ModelAdmin):
     
     def change_view(self, request, object_id=None, form_url='', extra_context=None):
         obj = self.get_object(object_id= object_id,request=request)
+        if object_id:
+            extra_context = extra_context or {}
+            extra_context['osm_data'] = self.get_dynamic_info()
+            return super().change_view(
+                request, object_id, form_url, extra_context=extra_context,
+            )
         if obj.requester == request.user or request.user.is_superuser:
             pass
         else:    
@@ -84,6 +88,9 @@ class TaskAdmin(admin.ModelAdmin):
             extra_context['show_save_and_continue'] = False
             extra_context['show_save_and_add_another'] = False
             extra_context['show_save_and_chandes'] = True    
+            return super().change_view(
+                request, object_id, form_url, extra_context=extra_context,
+            )
 
         return super().changeform_view(request, object_id, form_url, extra_context)
     
