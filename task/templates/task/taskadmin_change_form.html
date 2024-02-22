@@ -2,16 +2,15 @@
 
 {% block submit_buttons_bottom %}
     {{ block.super }}
-    <div class="submit-row">
-        <input type="submit" value="{{ obj.task.sostoyan }}" name="_prin">
-    </div>
-    {% if sostoyan.text in Открыта %}
+    
+    {% if obj.sostoyan == 'Открыта' %}
         <div class="submit-row">
                 <input type="submit" value="Взять в исполнение" name="_prin">
         </div>
-    {% elif sostoyan.text in 'В работе' and requester in request.user %}
+    {% elif obj.sostoyan == 'В работе' and obj.requester == request.user %}
         <div class="submit-row">
             <input type="submit" value="Закрыть" name="_phph">
-        </div>    
+            <input type="submit" value="Закрыть" name="_phph">
+        </div>
     {%  endif %}
 {% endblock %}

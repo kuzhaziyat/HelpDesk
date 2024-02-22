@@ -24,6 +24,13 @@ class TaskAdmin(admin.ModelAdmin):
     def response_change(self, request, obj):
         if "_prin" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
+            obj.еxecutor = request.user
+            obj.save()
+            self.message_user(request, "Заявка взята в работу")
+            return HttpResponseRedirect(".")
+        if "_prin" in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
+            obj.еxecutor = request.user
             obj.save()
             self.message_user(request, "This villain is now unique")
             return HttpResponseRedirect(".")
@@ -76,10 +83,9 @@ class TaskAdmin(admin.ModelAdmin):
         obj = self.get_object(object_id= object_id,request=request)
         if object_id:
             extra_context = extra_context or {}
-            extra_context['osm_data'] = self.get_dynamic_info()
-            return super().change_view(
-                request, object_id, form_url, extra_context=extra_context,
-            )
+            extra_context = {'obj': obj, "request": request,"self": self}
+            print(obj.sostoyan)
+            
         if obj.requester == request.user or request.user.is_superuser:
             pass
         else:    
@@ -88,7 +94,7 @@ class TaskAdmin(admin.ModelAdmin):
             extra_context['show_save_and_continue'] = False
             extra_context['show_save_and_add_another'] = False
             extra_context['show_save_and_chandes'] = True    
-            return super().change_view(
+        return super().change_view(
                 request, object_id, form_url, extra_context=extra_context,
             )
 
