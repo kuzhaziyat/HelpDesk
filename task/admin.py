@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 import requests
 
 from planner import handler_bot
+# Добавление пути к папке с вашим модулем в переменную PYTHONPATH
 
 class CommentInlane(admin.StackedInline):
     model = Comments
@@ -110,7 +111,6 @@ class TaskAdmin(admin.ModelAdmin):
                        ]
         })
     )
-    inlines = [CommentInlane]
 
     def formfield_for_dbfield(self, *args, **kwargs):
         formfield = super().formfield_for_dbfield(*args, **kwargs)

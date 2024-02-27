@@ -69,7 +69,7 @@ class Comments(models.Model):
     description = models.TextField('Комментарий',max_length= 255)
     comment_creator = models.ForeignKey(userModel.User,null=True,on_delete=models.PROTECT,verbose_name = "Отправитель", related_name= 'comment_creator')
     created_date = models.DateTimeField('Дата создания',auto_now_add=True)
-    task_id = models.ForeignKey("Task", verbose_name=("Заявка"), on_delete=models.PROTECT)
+    task_id = models.ForeignKey("Task", verbose_name=("Комментарии"), on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = 'Комментарий'
