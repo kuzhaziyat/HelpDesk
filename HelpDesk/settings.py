@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'telegram_django_bot',
     'django_json_widget',
-    'colorfield'
-
+    'colorfield',
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,6 +58,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'HelpDesk.urls'
 TELEGRAM_ROOT_UTRLCONF = 'HelpDesk.urls'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -138,6 +140,6 @@ DJANGO_ALLOW_ASYNC_UNSAFE = True
 
 # Настройки бота
 
-TOKEN = '6509878258:AAFlgOiQFAka75CLf8Mo9zcO6il4RX3-Zo8'
+TOKEN = '6919368693:AAHi7p_EsO0pzBRmbal1qQNgUD7WXh_jVn0'
 
-PROXY_URL = 'https://telegg.ru/orig/bot'
+PROXY_URL = 'https://api.telegram.org/bot'

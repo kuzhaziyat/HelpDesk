@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin,Group
 from django import forms
-
+from planner import handler_bot
 from .models import *
 
 @admin.register(User)
@@ -11,7 +11,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('username', 'password')
         }),
         ('Персональная информация', {
-            'fields': ('first_name', 'last_name', 'oname', 'phone_number','email')
+            'fields': ('first_name', 'last_name', 'oname', 'phone_number','email','telegramid')
         }),
         ('Место работы', {
             'fields': ('organization','department','groups','role')
@@ -25,6 +25,7 @@ class CustomUserAdmin(UserAdmin):
 
     def save_model(self, request, obj, form,change):
         if form.is_valid():
+            handler_bot.sendMessageTG(obj.telegramid,'Ваш аккаунт привязали к сервису HelpDesk')
             if not obj.id and not request.user.is_superuser:
                 obj.organization = request.user.organization
             if obj.is_active:
@@ -33,7 +34,7 @@ class CustomUserAdmin(UserAdmin):
             else:
                 obj.is_staff = False
                 obj.save()
-        super().save_model(request, obj, form, change)
+            super().save_model(request, obj, form, change)
 
 
     def get_queryset(self, request):

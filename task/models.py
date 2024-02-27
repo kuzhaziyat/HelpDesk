@@ -34,6 +34,8 @@ class Task(models.Model):
     date_plan = models.DateTimeField('Плановая дата решения',blank=True, null=True)
     date_fact_completion = models.DateTimeField('Дата фактического выполнения',blank=True, null=True)#
     file_task = models.FileField("Файлы", upload_to=None, max_length=100, null=True,blank=True)
+    report_еxecutor = models.TextField('Отчет о проделанной работе',max_length= 255,blank=True)
+
 
     def __str__(self):
         return self.name
@@ -65,6 +67,10 @@ class Priority(models.Model):
 
 class Comments(models.Model):
     description = models.TextField('Комментарий',max_length= 255)
-    comment_creator = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Отправитель", related_name= 'comment_creator')
+    comment_creator = models.ForeignKey(userModel.User,null=True,on_delete=models.PROTECT,verbose_name = "Отправитель", related_name= 'comment_creator')
     created_date = models.DateTimeField('Дата создания',auto_now_add=True)
-    task_id = models.ForeignKey("Task", verbose_name=("Комментарии"), on_delete=models.PROTECT)
+    task_id = models.ForeignKey("Task", verbose_name=("Заявка"), on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'

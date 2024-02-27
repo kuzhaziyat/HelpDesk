@@ -5,22 +5,26 @@ from user import models as userModel
 from django.utils.html import format_html
 from django.db.models import Q
 from django.http import HttpResponseRedirect
+import requests
 
+from planner import handler_bot
 
-
-class CommentInlane(admin.TabularInline):
+class CommentInlane(admin.StackedInline):
     model = Comments
     extra = 0
     can_delete = False
-    readonly_fields = ['created_date']
+    readonly_fields = ['created_date','comment_creator']
 
-    fields = [('description',),('comment_creator',)]
-    show_change_link = True
-    
+    fields = [('description','created_date','comment_creator'),]
+    def save_model(self, request, obj, form,change):
+        if form.is_valid():
+            if not obj.id:
+                obj.comment_creator = request.user
+                obj.save()
+        super().save_model(request, obj, form, change)
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     change_form_template = "task/taskadmin_change_form.html"
-
     read_only_fields = True
 
     def response_change(self, request, obj):
@@ -28,36 +32,47 @@ class TaskAdmin(admin.ModelAdmin):
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
             obj.status = self.model.STATUS_CHOISEC['Prin']
             obj.еxecutor = request.user
+            handler_bot.sendMessageTG(obj.еxecutor.telegramid,'Вы взяли в работу заявку под номером ' + str(obj.id))
+            handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' взяли в работу')
             obj.save()
             self.message_user(request, "Заявка взята в работу")
             return HttpResponseRedirect(".")
         if "_canceled" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
             obj.status = self.model.STATUS_CHOISEC['Canceled']
+            handler_bot.sendMessageTG(obj.еxecutor.telegramid,'Заявку под номером ' + str(obj.id) + ' отменили')
             obj.save()
             self.message_user(request, "Заявка отменена")
             return HttpResponseRedirect(".")
         if "_ready" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
             obj.status = self.model.STATUS_CHOISEC['Vipol']
+            handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' выполнили, войдите в систему и проверьте Отчет о проделанной работе')
             obj.save()
             self.message_user(request, "Заявка считается выполненной")
             return HttpResponseRedirect(".")
         if "_send_control" in request.POST:
-            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
-            obj.status = self.model.STATUS_CHOISEC['InControl']
-            obj.save()
-            self.message_user(request, "Заявка отправлена на контроль")
+            if obj.controluser:
+                obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
+                obj.status = self.model.STATUS_CHOISEC['InControl']
+                handler_bot.sendMessageTG(obj.controluser.telegramid,'К вам на контроль отправили заявку под номером ' + str(obj.id))
+                if obj.executor:
+                    handler_bot.sendMessageTG(obj.executor.telegramid,'Заявка под номером ' + str(obj.id) + ' отправлена на контроль')
+                obj.save()
+                self.message_user(request, "Заявка отправлена на контроль")
             return HttpResponseRedirect(".")
         if "_send_in_work" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
             obj.status = self.model.STATUS_CHOISEC['Return']
+            handler_bot.sendMessageTG(obj.executor.telegramid,'Заявка под номером ' + str(obj.id) + ' возвращена в работу')
+            handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' вернули в работу')
             obj.save()
             self.message_user(request, "Заявка возвращена в работу")
             return HttpResponseRedirect(".")
         if "_control_ready" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
             obj.status = self.model.STATUS_CHOISEC['Control']
+            handler_bot.sendMessageTG(obj.requester.telegramid,'Заявку под номером ' + str(obj.id) + ' выполнили, войдите в систему и проверьте Отчет о проделанной работе')
             obj.save()
             self.message_user(request, "Заявка считается выполненной")
             return HttpResponseRedirect(".")
@@ -71,8 +86,7 @@ class TaskAdmin(admin.ModelAdmin):
 
     color_priority.allow_tags = True
 
-    list_display = ('name','typeTask','status','sostoyan','color_priority','department','date_plan')
-
+    list_display = ('id','name','typeTask','status','sostoyan','color_priority','department','date_plan')
     readonly_fields = ['created_date','status','sostoyan','updated_date','date_fact_completion','requester']
     fieldsets  = (
         ('Основные данные заявки',{
@@ -86,7 +100,7 @@ class TaskAdmin(admin.ModelAdmin):
         ('Исполнитель',{
             'fields':[
                 ('organization','department'),
-                ('еxecutor'),
+                ('еxecutor','report_еxecutor'),
             ]
         }),
         ('Дополнительные поля',{
@@ -229,3 +243,14 @@ class PriorityAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return super(PriorityAdmin, self).get_fieldsets(request, obj)
         return self.user_fieldsets
+    
+@admin.register(Comments)
+class CommentsAdmin(admin.ModelAdmin):
+    readonly_fields = ['comment_creator']
+
+    def save_model(self, request, obj, form,change):
+        if form.is_valid():
+            if not obj.id:
+                obj.comment_creator = request.user
+                obj.save()
+        super().save_model(request, obj, form, change)
