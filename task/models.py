@@ -9,7 +9,7 @@ class Task(models.Model):
     "Prin": "Принята к исполнению",
     "Vipol": "Выполнена",
     "Canceled": "Отменена",
-    "Control": "На контроле",
+    "InControl": "На контроле",
     "Return": "Возвращена",
     "Control": "Проконтролирована",
     }
@@ -21,6 +21,7 @@ class Task(models.Model):
     name = models.CharField('Тема',max_length= 255)
     description = models.TextField('Описание',max_length= 255,blank=True)
     requester = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Отправитель",blank=True,null=True, related_name= 'task_requester'   ,limit_choices_to={'is_active': True})
+    controluser = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Контролирующий сотрудник",blank=True,null=True, related_name= 'task_controller'   ,limit_choices_to={'is_active': True})
     еxecutor = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Ответственный", related_name= 'task_executor',blank=True,null=True,limit_choices_to={'is_active': True})
     organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True,related_name= 'task_org')
     department = models.ForeignKey(userModel.Department,on_delete=models.PROTECT,verbose_name = "Отдел",blank=True, null=True)

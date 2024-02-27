@@ -6,6 +6,8 @@ from django.utils.html import format_html
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 
+
+
 class CommentInlane(admin.TabularInline):
     model = Comments
     extra = 0
@@ -24,15 +26,40 @@ class TaskAdmin(admin.ModelAdmin):
     def response_change(self, request, obj):
         if "_prin" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
+            obj.status = self.model.STATUS_CHOISEC['Prin']
             obj.еxecutor = request.user
             obj.save()
             self.message_user(request, "Заявка взята в работу")
             return HttpResponseRedirect(".")
-        if "_prin" in request.POST:
-            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
-            obj.еxecutor = request.user
+        if "_canceled" in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
+            obj.status = self.model.STATUS_CHOISEC['Canceled']
             obj.save()
-            self.message_user(request, "This villain is now unique")
+            self.message_user(request, "Заявка отменена")
+            return HttpResponseRedirect(".")
+        if "_ready" in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
+            obj.status = self.model.STATUS_CHOISEC['Vipol']
+            obj.save()
+            self.message_user(request, "Заявка считается выполненной")
+            return HttpResponseRedirect(".")
+        if "_send_control" in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
+            obj.status = self.model.STATUS_CHOISEC['InControl']
+            obj.save()
+            self.message_user(request, "Заявка отправлена на контроль")
+            return HttpResponseRedirect(".")
+        if "_send_in_work" in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
+            obj.status = self.model.STATUS_CHOISEC['Return']
+            obj.save()
+            self.message_user(request, "Заявка возвращена в работу")
+            return HttpResponseRedirect(".")
+        if "_control_ready" in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
+            obj.status = self.model.STATUS_CHOISEC['Control']
+            obj.save()
+            self.message_user(request, "Заявка считается выполненной")
             return HttpResponseRedirect(".")
         return super().response_change(request, obj)
 
@@ -64,7 +91,7 @@ class TaskAdmin(admin.ModelAdmin):
         }),
         ('Дополнительные поля',{
             'fields': [ 
-                        ('requester'),             
+                        ('requester','controluser'),             
                         ('created_date','updated_date','date_fact_completion'), 
                        ]
         })
@@ -84,8 +111,7 @@ class TaskAdmin(admin.ModelAdmin):
         if object_id:
             extra_context = extra_context or {}
             extra_context = {'obj': obj, "request": request,"self": self}
-            print(obj.sostoyan)
-            
+
         if obj.requester == request.user or request.user.is_superuser:
             pass
         else:    
@@ -106,7 +132,14 @@ class TaskAdmin(admin.ModelAdmin):
                 return True
             else:
                 return False
-    
+
+    def has_change_permission(self, request, obj=None):
+        if obj:
+            if obj.sostoyan in self.model.SOSTOYAN_CHOISEC['Closed']:
+                print(obj.sostoyan)
+                return False
+            return True
+
     def save_model(self, request, obj, form, change):
         if form.is_valid():
             if not obj.id:
