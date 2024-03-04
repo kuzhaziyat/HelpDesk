@@ -13,3 +13,9 @@ def get_list_task_for_tg_user(request, tgid):
     data = {'slug': tgid, 'message': '{tasks}'.format(tgid)}
     print(data)
     return HttpResponse(data)
+
+def get_department(request):
+    organization_id = request.GET.get('organization')
+    print('succes')
+    departments = Department.objects.filter(organization = organization_id).values('id','name')
+    return JsonResponse(list(departments),safe=False)    

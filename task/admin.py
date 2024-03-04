@@ -143,7 +143,6 @@ class TaskAdmin(admin.ModelAdmin):
                 request, object_id, form_url, extra_context=extra_context,
             )
 
-        return super().changeform_view(request, object_id, form_url, extra_context)
     
     def has_delete_permission(self, request, obj=None):
         if obj:
