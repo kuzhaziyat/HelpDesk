@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 import requests
+from django.contrib import messages
 
 from planner import handler_bot
 # Добавление пути к папке с вашим модулем в переменную PYTHONPATH
@@ -23,6 +24,7 @@ class CommentInlane(admin.StackedInline):
                 obj.comment_creator = request.user
                 obj.save()
         super().save_model(request, obj, form, change)
+
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     change_form_template = "task/taskadmin_change_form.html"
@@ -57,15 +59,18 @@ class TaskAdmin(admin.ModelAdmin):
                 obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
                 obj.status = self.model.STATUS_CHOISEC['InControl']
                 handler_bot.sendMessageTG(obj.controluser.telegramid,'К вам на контроль отправили заявку под номером ' + str(obj.id))
-                if obj.executor:
-                    handler_bot.sendMessageTG(obj.executor.telegramid,'Заявка под номером ' + str(obj.id) + ' отправлена на контроль')
+                if obj.еxecutor:
+                    handler_bot.sendMessageTG(obj.еxecutor.telegramid,'Заявка под номером ' + str(obj.id) + ' отправлена на контроль')
                 obj.save()
                 self.message_user(request, "Заявка отправлена на контроль")
+            else:
+                messages.error(request, "Вы не добавили Контролирующего сотрудника")
             return HttpResponseRedirect(".")
         if "_send_in_work" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
             obj.status = self.model.STATUS_CHOISEC['Return']
-            handler_bot.sendMessageTG(obj.executor.telegramid,'Заявка под номером ' + str(obj.id) + ' возвращена в работу')
+            obj.controluser = any
+            handler_bot.sendMessageTG(obj.еxecutor.telegramid,'Заявка под номером ' + str(obj.id) + ' возвращена в работу')
             handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' вернули в работу')
             obj.save()
             self.message_user(request, "Заявка возвращена в работу")
