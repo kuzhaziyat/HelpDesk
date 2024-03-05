@@ -41,7 +41,7 @@ class Task(models.Model):
         return self.name
     
     class Meta:
-        verbose_name = 'Заявка'
+        verbose_name = 'Заявку'
         verbose_name_plural = 'Заявки'
 
 class TypeTask(models.Model):

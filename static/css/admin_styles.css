@@ -2,9 +2,25 @@
     background: linear-gradient(#2f3c42,#b8b8bf);
     align-items: center;
 }
-
-#app-list-tabe-admin{
+#tr-model{
     border-radius: 50px;
-    display: block;
-
+    background-color: var(--body-bg);
+}
+#app-list-tabe-admin{
+    border-spacing: 0;
+    border-collapse: separate;
+    border-radius: 10px;    
+}
+#site-branding{
+    display:flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+#site-name{
+    display: flex;
+    align-items: center;
+    margin: 0 !important;
 }

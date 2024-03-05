@@ -6,19 +6,19 @@
 html[data-theme="light"],
 :root {
     --primary: #79aec8;
-    --secondary: #417690;
-    --accent: #f5dd5d;
+    --secondary: #ffffff;
+    --accent: #f79236;
     --primary-fg: #fff;
 
     --body-fg: #333;
-    --body-bg: #fff;
+    --body-bg: #ffffff;
     --body-quiet-color: #666;
     --body-loud-color: #000;
 
-    --header-color: #ffc;
+    --header-color: var(--body-fg);
     --header-branding-color: var(--accent);
-    --header-bg: var(--secondary);
-    --header-link-color: var(--primary-fg);
+    --header-bg: var(--body-bg);
+    --header-link-color: var(--body-fg);
 
     --breadcrumbs-fg: #c4dce8;
     --breadcrumbs-link-fg: var(--body-bg);
@@ -39,7 +39,7 @@ html[data-theme="light"],
 
     --darkened-bg: #f8f8f8; /* A bit darker than --body-bg */
     --selected-bg: #e4e4e4; /* E.g. selected table cells */
-    --selected-row: #ffc;
+    --selected-row: #f79236;
 
     --button-fg: #fff;
     --button-bg: var(--secondary);
@@ -983,7 +983,7 @@ a.deletelink:focus, a.deletelink:hover {
 }
 
 #user-tools a, #logout-form button {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 #user-tools a:focus, #user-tools a:hover,
