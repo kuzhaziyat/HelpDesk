@@ -64,10 +64,11 @@
         }
 
         const nav = document.getElementById('nav-filter');
-        nav.addEventListener('change', checkValue, false);
-        nav.addEventListener('input', checkValue, false);
-        nav.addEventListener('keyup', checkValue, false);
-
+        if(nav){
+            nav.addEventListener('change', checkValue, false);
+            nav.addEventListener('input', checkValue, false);
+            nav.addEventListener('keyup', checkValue, false);
+        }
         const storedValue = sessionStorage.getItem('django.admin.navSidebarFilterValue');
         if (storedValue) {
             nav.value = storedValue;

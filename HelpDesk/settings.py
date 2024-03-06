@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#%5-y*$cw&n5osfi46h0gstu5vfo92-vcivb4^1$urs_%s1hhr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['service.anocct.ru']
 
 
 # Application definition
@@ -77,17 +77,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'HelpDesk.wsgi.application'
 
 
+CSRF_TRUSTED_ORIGINS = ['https://service.anocct.ru','http://10.10.60.121:8000']
+
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'HelpDesk',
-        'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': 5432,
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'HelpDesk',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'root',
+        # 'HOST': 'localhost',
+        # 'PORT': 5432,
 
         # 'ENGINE': 'django.db.backends.postgresql',
         # 'NAME': 'dbhelpdesk',
@@ -95,6 +98,13 @@ DATABASES = {
         # 'PASSWORD': '5H9Yn1l1b2lfbvWS',
         # 'HOST': '95.167.178.152',
         # 'PORT': 5432,
+
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'help_desk',
+        'USER': 'postgres',
+        'PASSWORD': 'bd~wl4KwBD',
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
 }
 
