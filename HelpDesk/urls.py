@@ -4,5 +4,5 @@ from task.views import *
 
 urlpatterns = [
     path('', admin.site.urls),
-    path('task/task/add/sss/change/', get_department, name='get_department'),
+    path('task/task/add/', get_department, name='get_department'),
 ]
