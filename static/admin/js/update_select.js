@@ -1,24 +1,25 @@
-const selectOrg = document.getElementById('id_organization')
-const selectDep = document.getElementById('id_department')
-const selectEx = document.getElementById('id_еxecutor')
-
-
-var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+const selectOrg = document.getElementById('id_organization');
+const selectDep = document.getElementById('id_department');
 
 selectOrg.addEventListener('change', function(event){
-    if (selectDep.childNodes.length){
-    }
-    const url =  "/your_app/util/" + $(this).val();
-    const val = event.target.value;
+    const orgId = event.target.value;
     $.ajax({
-        url: '',
+        url: "/task/get_departments/"+orgId+"/", // Предполагается, что у вас есть URL, который возвращает список отделов для данной организации
         type: "GET",
         dataType: "json",
         success: (data) => {
-          console.log(data);
+            // Очищаем текущие варианты отделов
+            selectDep.innerHTML = '';
+            // Добавляем новые варианты отделов на основе полученных данных
+            data.forEach((department) => {
+                const option = document.createElement('option');
+                option.text = department.name; // Предполагается, что у вас есть свойство 'name' для каждого отдела
+                option.value = department.id; // Предполагается, что у вас есть свойство 'id' для каждого отдела
+                selectDep.appendChild(option);
+            });
         },
         error: (error) => {
-          console.log(error);
+            console.log(error);
         }
-      });
-})
+    });
+});
