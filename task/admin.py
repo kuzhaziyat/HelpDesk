@@ -2,36 +2,15 @@ from typing import Any
 from django.contrib import admin
 from .models import *
 from user import models as userModel
+from django import forms
 from django.utils.html import format_html
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,JsonResponse
 import requests
 from django.contrib import messages
 
 from planner import handler_bot
 # Добавление пути к папке с вашим модулем в переменную PYTHONPATH
-
-class TaskForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(FeedSpecificationForm, self).__init__(*args, **kwargs)
-        self.fields['item_types'].widget = forms.CheckboxSelectMultiple(
-            choices=Item.TypeChoice.feed_specification_choices()
-        )
-        try:
-            self.fields['tags'].queryset = Tag.objects.filter(
-                station=self.instance.feed.station
-            )
-            self.fields['video_tags'].queryset = VideoTag.objects.filter(
-                station=self.instance.feed.station
-            )
-        except:
-            self.fields['tags'].queryset = Tag.objects.none()
-            self.fields['video_tags'].queryset = VideoTag.objects.none()
-    
-    def _clean_fields(self):
-        self.fields['tags'].queryset = Tag.objects.filter(station_id=self.data['station'])
-        self.fields['video_tags'].queryset = VideoTag.objects.filter(station_id=self.data['station'])
-        super()._clean_fields()
 
 class CommentInlane(admin.StackedInline):
     model = Comments
@@ -47,10 +26,46 @@ class CommentInlane(admin.StackedInline):
                 obj.save()
         super().save_model(request, obj, form, change)
 
+class FeedSpecificationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FeedSpecificationForm, self).__init__(*args, **kwargs)
+        
+        try:
+            self.fields['tags'].queryset = userModel.Department.objects.filter(organization = obj.organization)
+        except:
+            self.fields['tags'].queryset = userModel.Department.objects.filter(organization = obj.organization)
+    
+
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     change_form_template = "task/taskadmin_change_form.html"
     read_only_fields = True
+
+    
+
+    def get_form(self, request, obj=None, **kwargs):
+        if request.method == "GET":
+            print(str(userModel.Department.objects.filter(organization = obj.organization)))
+            response = {
+                'department': userModel.Department.objects.filter(organization = obj.organization)
+            }
+            
+        return super().get_form(request, obj, **kwargs)
+    
+
+
+            # try:
+            #     pass
+            # #   
+            # except:
+            #     pass
+            #    self.fields['tags'].queryset = Tag.objects.none()
+            #    self.fields['video_tags'].queryset = VideoTag.objects.none()
+
+        # elif request.method == "POST":
+        #   self.fields['tags'].queryset = Tag.objects.all()
+        #   self.fields['video_tags'].queryset = VideoTag.objects.all()     
+        # return super().get_form(request, obj, **kwargs)
 
     def response_change(self, request, obj):
         if "_prin" in request.POST:
