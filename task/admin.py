@@ -11,6 +11,28 @@ from django.contrib import messages
 from planner import handler_bot
 # Добавление пути к папке с вашим модулем в переменную PYTHONPATH
 
+class TaskForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FeedSpecificationForm, self).__init__(*args, **kwargs)
+        self.fields['item_types'].widget = forms.CheckboxSelectMultiple(
+            choices=Item.TypeChoice.feed_specification_choices()
+        )
+        try:
+            self.fields['tags'].queryset = Tag.objects.filter(
+                station=self.instance.feed.station
+            )
+            self.fields['video_tags'].queryset = VideoTag.objects.filter(
+                station=self.instance.feed.station
+            )
+        except:
+            self.fields['tags'].queryset = Tag.objects.none()
+            self.fields['video_tags'].queryset = VideoTag.objects.none()
+    
+    def _clean_fields(self):
+        self.fields['tags'].queryset = Tag.objects.filter(station_id=self.data['station'])
+        self.fields['video_tags'].queryset = VideoTag.objects.filter(station_id=self.data['station'])
+        super()._clean_fields()
+
 class CommentInlane(admin.StackedInline):
     model = Comments
     extra = 0

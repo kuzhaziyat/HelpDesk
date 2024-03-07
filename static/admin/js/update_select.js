@@ -11,6 +11,7 @@ selectOrg.addEventListener('change', function(event){
     if (selectDep.childNodes.length){
         selectDep.innerHTML = '';
     }
+    const url =  "/your_app/util/" + $(this).val();
     const val = event.target.value;
     $.ajax({
         url: '',
