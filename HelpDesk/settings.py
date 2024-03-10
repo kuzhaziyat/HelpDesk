@@ -85,12 +85,12 @@ CSRF_TRUSTED_ORIGINS = ['https://service.anocct.ru','http://10.10.60.121:8000']
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'HelpDesk',
-        # 'USER': 'postgres',
-        # 'PASSWORD': 'root',
-        # 'HOST': 'localhost',
-        # 'PORT': 5432,
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'HelpDesk',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': 5432,
 
         # 'ENGINE': 'django.db.backends.postgresql',
         # 'NAME': 'dbhelpdesk',
@@ -99,12 +99,12 @@ DATABASES = {
         # 'HOST': '95.167.178.152',
         # 'PORT': 5432,
 
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'help_desk',
-        'USER': 'postgres',
-        'PASSWORD': 'bd~wl4KwBD',
-        'HOST': 'localhost',
-        'PORT': 5432,
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'help_desk',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'bd~wl4KwBD',
+        # 'HOST': 'localhost',
+        # 'PORT': 5432,
     }
 }
 
