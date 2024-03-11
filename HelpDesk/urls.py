@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django.urls import path, include
-from task.views import *
-
+from django.urls import path, url
+from task import urls as taskUrls
 urlpatterns = [
     path('', admin.site.urls),
-    path('task/get_departments/<int:org_id>/', get_department, name='get_department'),
+    path('task',taskUrls,name='taskUrls'),
 ]

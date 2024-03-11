@@ -38,7 +38,10 @@ class Department(models.Model):
     organization = models.ForeignKey('Organization',on_delete=models.PROTECT,verbose_name = "Организация",default = '',null=True)
 
     def __str__(self):
-        return self.name
+        if self.organization:
+            return self.name + " " + str(self.organization)
+        else:
+            return self.name
     class Meta:
         verbose_name = 'Отдел'
         verbose_name_plural = 'Отделы'

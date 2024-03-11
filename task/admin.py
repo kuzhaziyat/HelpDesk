@@ -41,32 +41,6 @@ class TaskAdmin(admin.ModelAdmin):
     change_form_template = "task/taskadmin_change_form.html"
     read_only_fields = True
 
-    
-
-    def get_form(self, request, obj=None, **kwargs):
-        if request.method == "GET":
-            print(str(userModel.Department.objects.filter(organization = obj.organization)))
-            response = {
-                'department': userModel.Department.objects.filter(organization = obj.organization)
-            }
-            
-        return super().get_form(request, obj, **kwargs)
-    
-
-
-            # try:
-            #     pass
-            # #   
-            # except:
-            #     pass
-            #    self.fields['tags'].queryset = Tag.objects.none()
-            #    self.fields['video_tags'].queryset = VideoTag.objects.none()
-
-        # elif request.method == "POST":
-        #   self.fields['tags'].queryset = Tag.objects.all()
-        #   self.fields['video_tags'].queryset = VideoTag.objects.all()     
-        # return super().get_form(request, obj, **kwargs)
-
     def response_change(self, request, obj):
         if "_prin" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
