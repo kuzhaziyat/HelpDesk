@@ -26,16 +26,6 @@ class CommentInlane(admin.StackedInline):
                 obj.save()
         super().save_model(request, obj, form, change)
 
-class FeedSpecificationForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(FeedSpecificationForm, self).__init__(*args, **kwargs)
-        
-        try:
-            self.fields['tags'].queryset = userModel.Department.objects.filter(organization = obj.organization)
-        except:
-            self.fields['tags'].queryset = userModel.Department.objects.filter(organization = obj.organization)
-    
-
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     change_form_template = "task/taskadmin_change_form.html"
