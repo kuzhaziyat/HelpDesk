@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('first_name', 'last_name', 'oname', 'phone_number','email','telegramid')
         }),
         ('Место работы', {
-            'fields': ('organization','department','groups','role')
+            'fields': ('organization','department','groups')
         }),
         ('Права доступа', {
             'fields': (

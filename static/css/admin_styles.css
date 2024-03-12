@@ -1,5 +1,6 @@
 #nav-sidebar{
-    background: linear-gradient(#2f3c42,#b8b8bf);
+    /* background: linear-gradient(#2f3c42,#b8b8bf); */
+    background: #2f3c42;
     align-items: center;
 }
 #tr-model{

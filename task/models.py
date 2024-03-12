@@ -23,7 +23,7 @@ class Task(models.Model):
     requester = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Отправитель",blank=True,null=True, related_name= 'task_requester'   ,limit_choices_to={'is_active': True})
     controluser = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Контролирующий сотрудник",blank=True,null=True, related_name= 'task_controller'   ,limit_choices_to={'is_active': True})
     еxecutor = models.ForeignKey(userModel.User,on_delete=models.PROTECT,verbose_name = "Ответственный", related_name= 'task_executor',blank=True,null=True,limit_choices_to={'is_active': True})
-    organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True,related_name= 'task_org')
+    organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=False, null=True,related_name= 'task_org')
     department = models.ForeignKey(userModel.Department,on_delete=models.PROTECT,verbose_name = "Отдел",blank=True, null=True)
     typeTask = models.ForeignKey('TypeTask',on_delete=models.PROTECT,verbose_name = "Тип заявки", null=True)#
     status = models.CharField(max_length=20,blank=True,verbose_name = "Статус")

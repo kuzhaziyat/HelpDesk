@@ -1,5 +1,8 @@
-from typing import Any
+from typing import Any, Mapping
 from django.contrib import admin
+from django.core.files.base import File
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
 from .models import *
 from user import models as userModel
 from django import forms
@@ -28,6 +31,7 @@ class CommentInlane(admin.StackedInline):
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
+    list_display_links = ['name']
     change_form_template = "task/taskadmin_change_form.html"
     read_only_fields = True
 
@@ -35,6 +39,8 @@ class TaskAdmin(admin.ModelAdmin):
         if "_prin" in request.POST:
             obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
             obj.status = self.model.STATUS_CHOISEC['Prin']
+            obj.organization = request.user.organization
+            obj.department = request.user.department
             obj.еxecutor = request.user
             handler_bot.sendMessageTG(obj.еxecutor.telegramid,'Вы взяли в работу заявку под номером ' + str(obj.id))
             handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' взяли в работу')
@@ -49,12 +55,22 @@ class TaskAdmin(admin.ModelAdmin):
             self.message_user(request, "Заявка отменена")
             return HttpResponseRedirect(".")
         if "_ready" in request.POST:
-            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
-            obj.status = self.model.STATUS_CHOISEC['Vipol']
-            handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' выполнили, войдите в систему и проверьте Отчет о проделанной работе')
-            obj.save()
-            self.message_user(request, "Заявка считается выполненной")
-            return HttpResponseRedirect(".")
+            if obj.report_еxecutor:
+                if obj.department:
+                    if obj.еxecutor:
+                        # obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
+                        obj.status = self.model.STATUS_CHOISEC['Vipol']
+                        handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' выполнили, войдите в систему и проверьте Отчет о проделанной работе')
+                        obj.save()
+                        self.message_user(request, "Статус заявки выполнена")
+                        return HttpResponseRedirect(".")
+                    else:
+                        messages.error(request, "Вы не заполнили Ответсвенного исполнителя")
+                else:
+                    messages.error(request, "Вы не заполнили отдел исполнителя")
+            else:
+                messages.error(request, "Вы не заполнили Отчет о проделанной работе")
+
         if "_send_control" in request.POST:
             if obj.controluser:
                 obj.sostoyan = self.model.SOSTOYAN_CHOISEC['InWork']
@@ -77,11 +93,19 @@ class TaskAdmin(admin.ModelAdmin):
             self.message_user(request, "Заявка возвращена в работу")
             return HttpResponseRedirect(".")
         if "_control_ready" in request.POST:
-            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
+            # obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
             obj.status = self.model.STATUS_CHOISEC['Control']
             handler_bot.sendMessageTG(obj.requester.telegramid,'Заявку под номером ' + str(obj.id) + ' выполнили, войдите в систему и проверьте Отчет о проделанной работе')
             obj.save()
-            self.message_user(request, "Заявка считается выполненной")
+            self.message_user(request, "Статус заявки выполнена")
+            return HttpResponseRedirect(".")
+        if '_closed' in request.POST:
+            obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
+            handler_bot.sendMessageTG(obj.controluser.telegramid,'Заявку под номером ' + str(obj.id) + ' закрыта')
+            if obj.еxecutor:
+                handler_bot.sendMessageTG(obj.еxecutor.telegramid,'Заявка под номером ' + str(obj.id) + ' закрыта')
+            obj.save()
+            self.message_user(request, "Состояние заявки закрыта")
             return HttpResponseRedirect(".")
         return super().response_change(request, obj)
 
@@ -92,9 +116,9 @@ class TaskAdmin(admin.ModelAdmin):
     color_priority.short_description = 'Приоритет'
 
     color_priority.allow_tags = True
+    readonly_fields = ['created_date','status','sostoyan','updated_date','date_fact_completion','requester']
 
     list_display = ('id','name','typeTask','status','sostoyan','color_priority','department','date_plan')
-    readonly_fields = ['created_date','status','sostoyan','updated_date','date_fact_completion','requester']
     fieldsets  = (
         ('Основные данные заявки',{
             'fields': [ 
@@ -144,7 +168,18 @@ class TaskAdmin(admin.ModelAdmin):
                 request, object_id, form_url, extra_context=extra_context,
             )
 
-    
+    # def get_readonly_fields(self, request, obj=None): 
+    #     if not obj.id:
+    #         if request.user == obj.requester:
+    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
+    #         elif request.user == obj.controluser:
+    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
+    #         elif request.user == obj.executor:
+    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
+    #         else:
+    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
+
+                
     def has_delete_permission(self, request, obj=None):
         if obj:
             if obj.requester == request.user or request.user.is_superuser:
@@ -184,6 +219,13 @@ class TaskAdmin(admin.ModelAdmin):
         qs = super(TaskAdmin, self).get_queryset(request)
         return qs.filter(Q(organization=request.user.organization) | Q(requester=request.user))
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "typeTask":
+            kwargs["queryset"] = TypeTask.objects.filter(organization=request.user.organization)
+        if db_field.name == "priority":
+            kwargs["queryset"] = Priority.objects.filter(organization=request.user.organization)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     inlines = [CommentInlane]
 
 @admin.register(TypeTask)
@@ -193,6 +235,8 @@ class TypeTaskAdmin(admin.ModelAdmin):
             'fields': [('name')]
         }),
     )
+    readonly_fields = ['organization']
+
     def save_model(self, request, obj, form,change):
         if form.is_valid():
             if not obj.id:

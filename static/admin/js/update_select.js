@@ -4,7 +4,7 @@ $(document).ready(function () {
     selectOrg.addEventListener('change', function (event) {
         const orgId = event.target.value;
         $.ajax({
-            url: '/task/get_departments/' + orgId + '/', // Используйте обратные кавычки (`) для вставки значения переменной
+            url: '/task/get_department/' + orgId + '/', // Используйте обратные кавычки (`) для вставки значения переменной
             type: "GET",
             dataType: "json",
             success: (data) => {

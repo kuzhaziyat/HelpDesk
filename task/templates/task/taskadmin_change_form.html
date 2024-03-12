@@ -3,41 +3,41 @@
 {% block submit_buttons_bottom %}
 {{ block.super }}
 {% if obj.id %}
-<div class="submit-row">
-    {% if obj.status == 'Запланирована' %}
-    {% if obj.requester == request.user %}
-    <input type="submit" value="Отменить" name="_canceled">
-    <input type="submit" value="Отправить на контроль" name="_send_control">
-    {% else %}
-    <input type="submit" value="Принять к исполнению" name="_prin">
-    <input type="submit" value="Выполнить" name="_ready">
-    {% endif %}
-    {% elif obj.status == 'Принята к исполнению' %}
-    {% if obj.requester == request.user %}
-    <input type="submit" value="Отменить" name="_canceled">
-    <input type="submit" value="Отправить на контроль" name="_send_control">
-    {% elif obj.еxecutor == request.user %}
-    <input type="submit" value="Выполнить" name="_ready">
-
-    {% endif %}
-    {% elif obj.status == 'На контроле' %}
-    {% if obj.controluser == request.user %}
-    <input type="submit" value="Отменить" name="_canceled">
-    <input type="submit" value="Вернуть в работу" name="_send_in_work">
-    <input type="submit" value="Проконтролировать и закрыть задачу" name="_control_ready">
-    {% endif %}
-    {% elif obj.status == 'Возвращена' %}
-    {% if obj.requester == request.user %}
-    <input type="submit" value="Отменить" name="_canceled">
-    <input type="submit" value="Отправить на контроль" name="_send_control">
-    {% else %}
-    <input type="submit" value="Выполнить" name="_ready">
-    <input type="submit" value="Принять к исполнению" name="_prin">
-    {% endif %}
-    {% elif obj.status == 'Выполнена' and obj.requester == request.user%}
-    <input type="submit" value="Отправить на контроль" name="_send_control">
-    <input type="submit" value="Вернуть в работу" name="_send_in_work">
-    {% endif %}
-</div>
+    <div class="submit-row">
+        {% if obj.status == 'Запланирована' %}
+            {% if obj.requester == request.user %}
+                <input type="submit" value="Отменить" name="_canceled">
+                <input type="submit" value="Отправить на контроль" name="_send_control">
+            {% else %}
+                <input type="submit" value="Принять к исполнению" name="_prin">
+                <input type="submit" value="Выполнить" name="_ready">
+            {% endif %}
+        {% elif obj.status == 'Принята к исполнению' %}
+            {% if obj.requester == request.user %}
+                <input type="submit" value="Отменить" name="_canceled">
+                <input type="submit" value="Отправить на контроль" name="_send_control">
+            {% elif obj.еxecutor == request.user %}
+                <input type="submit" value="Выполнить" name="_ready">
+            {% endif %}
+        {% elif obj.status == 'На контроле' %}
+            {% if obj.controluser == request.user %}
+                <input type="submit" value="Отменить" name="_canceled">
+                <input type="submit" value="Вернуть в работу" name="_send_in_work">
+                <input type="submit" value="Задача проконтролирована и выполнена" name="_control_ready">
+            {% endif %}
+        {% elif obj.status == 'Возвращена' %}
+            {% if obj.requester == request.user %}
+                <input type="submit" value="Отменить" name="_canceled">
+                <input type="submit" value="Отправить на контроль" name="_send_control">
+            {% else %}
+                <input type="submit" value="Выполнить" name="_ready">
+                <input type="submit" value="Принять к исполнению" name="_prin">
+            {% endif %}
+        {% elif obj.status == 'Выполнена' or obj.status == 'Проконтролирована' and obj.requester == request.user %}
+                <input type="submit" value="Отправить на контроль" name="_send_control">
+                <input type="submit" value="Вернуть в работу" name="_send_in_work">
+                <input type="submit" value="Закрыть заявку" name="_closed">
+        {% endif %}
+    </div>
 {% endif %}
 {% endblock %}

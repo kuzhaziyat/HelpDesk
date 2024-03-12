@@ -23,7 +23,7 @@ class User(AbstractUser):
 class Organization(models.Model):
     name = models.CharField("Наименование",max_length= 255,blank = False)
     description = models.CharField("Описание",max_length= 255,blank = True)  
-    is_active = models.BooleanField(default = True,)   
+    is_active = models.BooleanField("Активный", default = True,)   
 
     def __str__(self):
         return self.name
@@ -34,7 +34,7 @@ class Organization(models.Model):
 class Department(models.Model):
     name = models.CharField("Наименование",max_length= 255,blank = False,)
     description = models.CharField("Описание",max_length= 255,blank = True)  
-    is_active = models.BooleanField(default = True,)   
+    is_active = models.BooleanField("Активный", default = True,)   
     organization = models.ForeignKey('Organization',on_delete=models.PROTECT,verbose_name = "Организация",default = '',null=True)
 
     def __str__(self):
