@@ -1,8 +1,8 @@
 import requests
 from django.conf import settings
 
-bot_token = settings.TOKEN
-proxy_url = settings.PROXY_URL
+bot_token = settings.TOKEN_TG
+proxy_url = settings.PROXY_URL_TG
 
 url = f'{proxy_url}{bot_token}/sendMessage'
 
