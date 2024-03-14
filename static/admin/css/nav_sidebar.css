@@ -117,9 +117,7 @@
 }
 
 @media (max-width: 767px) {
-    #nav-sidebar, #toggle-nav-sidebar {
-        display: none;
-    }
+   
 
     .main > #nav-sidebar + .content,
     .main.shifted > #nav-sidebar + .content {
