@@ -6,15 +6,17 @@ from .models import *
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    list_display_links = ['id','last_name','first_name', 'oname']
+    list_display = ['id','last_name','first_name', 'oname', 'department', 'username']
     fieldsets = (
         (None, {
             'fields': ('username', 'password')
         }),
         ('Персональная информация', {
-            'fields': ('first_name', 'last_name', 'oname', 'phone_number','email','telegramid')
+            'fields': ('last_name','first_name', 'oname','email','telegramid')
         }),
         ('Место работы', {
-            'fields': ('organization','department','groups')
+            'fields': ('organization','department','position','groups')
         }),
         ('Права доступа', {
             'fields': (

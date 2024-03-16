@@ -2,6 +2,11 @@ from django.db import models
 from user import models as userModel
 from colorfield.fields import ColorField
 
+PRIORITY_CHOISEC = {
+        "Opened": "Открыта",
+        "InWork": "В работе",
+        "Closed": "Закрыта",
+    }
 
 class Task(models.Model):
     STATUS_CHOISEC = {
@@ -31,7 +36,7 @@ class Task(models.Model):
     priority = models.ForeignKey('Priority',on_delete=models.PROTECT,verbose_name = "Приоритет заявки", null=True)#
     created_date = models.DateTimeField('Дата создания',auto_now_add=True)
     updated_date = models.DateTimeField('Дата обновления',auto_now=True)
-    date_plan = models.DateTimeField('Плановая дата решения',blank=True, null=True)
+    date_plan = models.DateTimeField('Срок исполнении',blank=True, null=True)
     date_fact_completion = models.DateTimeField('Дата фактического выполнения',blank=True, null=True)#
     file_task = models.FileField("Файлы", upload_to=None, max_length=100, null=True,blank=True)
     report_еxecutor = models.TextField('Отчет о проделанной работе',max_length= 255,blank=True)
@@ -57,7 +62,6 @@ class TypeTask(models.Model):
 class Priority(models.Model):
     name = models.CharField('Название')
     color = ColorField(format="rgb")
-    organization = models.ForeignKey(userModel.Organization,on_delete=models.PROTECT,verbose_name = "Организация",blank=True, null=True)
 
     def __str__(self):
         return self.name

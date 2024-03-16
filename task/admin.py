@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect,JsonResponse
 import requests
 from django.contrib import messages
+from django.utils import timezone
 
 from planner import handler_bot
 # Добавление пути к папке с вашим модулем в переменную PYTHONPATH
@@ -60,6 +61,7 @@ class TaskAdmin(admin.ModelAdmin):
                     if obj.еxecutor:
                         # obj.sostoyan = self.model.SOSTOYAN_CHOISEC['Closed']
                         obj.status = self.model.STATUS_CHOISEC['Vipol']
+                        obj.date_fact_completion = timezone.now()
                         handler_bot.sendMessageTG(obj.requester.telegramid,'Вашу заявку под номером ' + str(obj.id) + ' выполнили, войдите в систему и проверьте Отчет о проделанной работе')
                         obj.save()
                         self.message_user(request, "Статус заявки выполнена")
@@ -116,9 +118,9 @@ class TaskAdmin(admin.ModelAdmin):
     color_priority.short_description = 'Приоритет'
 
     color_priority.allow_tags = True
-    readonly_fields = ['created_date','status','sostoyan','updated_date','date_fact_completion','requester']
 
     list_display = ('id','name','typeTask','status','sostoyan','color_priority','department','date_plan')
+
     fieldsets  = (
         ('Основные данные заявки',{
             'fields': [ 
@@ -168,18 +170,37 @@ class TaskAdmin(admin.ModelAdmin):
                 request, object_id, form_url, extra_context=extra_context,
             )
 
-    # def get_readonly_fields(self, request, obj=None): 
-    #     if not obj.id:
-    #         if request.user == obj.requester:
-    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
-    #         elif request.user == obj.controluser:
-    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
-    #         elif request.user == obj.executor:
-    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
-    #         else:
-    #             return ('created_date','status','sostoyan','updated_date','date_fact_completion','requester')
+    def get_readonly_fields(self, request, obj=None):
+        readonly_requester = ('created_date','status',
+                              'sostoyan','updated_date',
+                              'date_fact_completion','requester',
+                              'report_еxecutor'
+                              )
+        
+        readonly_controluser = ('created_date','status',
+                                'sostoyan','updated_date',
+                                'date_fact_completion','requester'
+                                )
+        
+        readonly_executor = ('created_date','status',
+                        'sostoyan','updated_date',
+                        'date_fact_completion','requester',
+                        'name', 'description', 'controluser',
+                        'organization', 'typeTask', 'priority',
+                        'file_task', 'date_plan'
+                        )
+        if obj is not None:
+            if request.user == obj.requester:
+                return readonly_requester
+            elif request.user == obj.controluser:
+                return readonly_controluser
+            elif request.user == obj.еxecutor:
+                return readonly_executor
+            else:
+                pass
+        else:
+            return readonly_requester
 
-                
     def has_delete_permission(self, request, obj=None):
         if obj:
             if obj.requester == request.user or request.user.is_superuser:
@@ -208,22 +229,20 @@ class TaskAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     # def get_fieldsets(self, request, obj=None):
-    #     if request.user.is_superuser:
-    #         return super(TaskAdmin, self).get_fieldsets(request, obj)
-    #     return self.user_fieldsets   
+    #      if request.user.is_superuser:
+    #          return super(TaskAdmin, self).get_fieldsets(request, obj)
+    #      return self.user_fieldsets   
 
     def get_queryset(self, request):
-        # if request.user.is_superuser:
-        #     return super(TaskAdmin, self).get_queryset(request)
-        # else:   
-        qs = super(TaskAdmin, self).get_queryset(request)
-        return qs.filter(Q(organization=request.user.organization) | Q(requester=request.user))
+        if request.user.is_superuser:
+            return super(TaskAdmin, self).get_queryset(request)
+        else:
+            qs = super(TaskAdmin, self).get_queryset(request)
+            return qs.filter(Q(organization=request.user.organization) | Q(requester=request.user))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "typeTask":
             kwargs["queryset"] = TypeTask.objects.filter(organization=request.user.organization)
-        if db_field.name == "priority":
-            kwargs["queryset"] = Priority.objects.filter(organization=request.user.organization)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     inlines = [CommentInlane]
@@ -266,32 +285,12 @@ class PriorityAdmin(admin.ModelAdmin):
     color_priority.short_description = 'Цвет'
     color_priority.allow_tags = True
 
-    readonly_fields = ['organization']
-
     list_display = ('name', 'color_priority')
-    user_fieldsets  = (
+    fieldsets  = (
         (None,{
             'fields': ('name', 'color')
         }),
     )
-    def save_model(self, request, obj, form,change):
-        if form.is_valid():
-            if not obj.id:
-                obj.organization = request.user.organization
-                obj.save()
-        super().save_model(request, obj, form, change)
-
-    def get_queryset(self, request):
-        if request.user.is_superuser:
-            return super(PriorityAdmin, self).get_queryset(request)
-        else:
-            qs = super(PriorityAdmin, self).get_queryset(request)
-            return qs.filter(organization=request.user.organization)            
-        
-    def get_fieldsets(self, request, obj=None):
-        if request.user.is_superuser:
-            return super(PriorityAdmin, self).get_fieldsets(request, obj)
-        return self.user_fieldsets
     
 @admin.register(Comments)
 class CommentsAdmin(admin.ModelAdmin):

@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
+from .views import *
 
 urlpatterns = [
-    path('get_departments/<slug:org_id>/', views.get_department, name='get_department'),
+    path('getexecutor/<int:dep_id>/', get_executor, name='get_executor'),
+    path('getdepartments/<int:org_id>/', get_department, name='get_department'),
 ]
