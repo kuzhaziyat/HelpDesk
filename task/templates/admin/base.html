@@ -11,6 +11,7 @@
   <script src="{% static "admin/js/theme.js" %}" defer></script>
   <script type="text/javascript" src="{% static "admin/js/Update_select.js" %}" defer></script>
   <script type="text/javascript" src="{% static "admin/js/Telegeram_web_app.js" %}" defer></script>
+  <script type="text/javascript" src="{% static "admin/js/is_first_login.js" %}" defer></script>
 
 {% endblock %}
 {% if not is_popup and is_nav_sidebar_enabled %}
@@ -33,9 +34,6 @@
 <a href="#content-start" class="skip-to-content-link">{% translate 'Skip to main content' %}</a>
 <!-- Container -->
 <div id="container">
-
-    
-
     <div class="main" id="main">
       {% if not is_popup and is_nav_sidebar_enabled %}
         {% block nav-sidebar %}
@@ -82,7 +80,7 @@
       </header>
     {% endblock %}
     <!-- END Header -->
-    
+
     {% endif %}
 
         {% block messages %}
@@ -113,6 +111,27 @@
     </div>
 </div>
 <!-- END Container -->
+
+<dialog >
+  <div class="container">
+    <div class="cta-form">
+      <h2>Заполним последние данные регистрации!</h2> 
+      <p>Узнать свой Telegram ID можете по <a href='https://t.me/SDTuvaBot'> ссылке </a></p>
+      <p>Поля для заполнения даются 1 раз, просим внести корректную информацию</p>
+    </div>
+
+    <form action="" class="form" id="form__first_login">{% csrf_token%}
+      
+      <input type="text" placeholder="Telegram ID" class="form__input" id="tgid" />
+
+      <input type="email" placeholder="Email" class="form__input" id="email" />
+
+      <input type="submit" class="form__input">
+      
+    </form>
+  </div>
+</dialog>
+
 
 <!-- SVGs -->
 <svg xmlns="http://www.w3.org/2000/svg" class="base-svgs">

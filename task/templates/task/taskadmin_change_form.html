@@ -8,15 +8,16 @@
             {% if obj.requester == request.user %}
                 <input type="submit" value="Отменить" name="_canceled">
                 <input type="submit" value="Отправить на контроль" name="_send_control">
-            {% else %}
-                <input type="submit" value="Принять к исполнению" name="_prin">
+            {% elif request.user == obj.executor %}
                 <input type="submit" value="Выполнить" name="_ready">
+            {% elif not obj.executor %}
+                <input type="submit" value="Принять к исполнению" name="_prin">
             {% endif %}
         {% elif obj.status == 'Принята к исполнению' %}
             {% if obj.requester == request.user %}
                 <input type="submit" value="Отменить" name="_canceled">
                 <input type="submit" value="Отправить на контроль" name="_send_control">
-            {% elif obj.еxecutor == request.user %}
+            {% elif obj.executor == request.user %}
                 <input type="submit" value="Выполнить" name="_ready">
             {% endif %}
         {% elif obj.status == 'На контроле' %}
@@ -29,8 +30,9 @@
             {% if obj.requester == request.user %}
                 <input type="submit" value="Отменить" name="_canceled">
                 <input type="submit" value="Отправить на контроль" name="_send_control">
-            {% else %}
+            {% elif request.user == obj.executor %}
                 <input type="submit" value="Выполнить" name="_ready">
+            {% elif not obj.executor %}
                 <input type="submit" value="Принять к исполнению" name="_prin">
             {% endif %}
         {% elif obj.status == 'Выполнена' or obj.status == 'Проконтролирована' and obj.requester == request.user %}

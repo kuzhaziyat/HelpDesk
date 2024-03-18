@@ -27,7 +27,8 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ['service.anocct.ru','10.10.60.121','www.service.anocct.ru']
-
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 ROOT_URLCONF = 'HelpDesk.urls'
 
 # Application definition

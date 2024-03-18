@@ -1,18 +1,38 @@
+import json
+from .models import User
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from .forms import *
+from django.http import JsonResponse
 
-def home(request):
-	return HttpResponse('<h1>Главная</h1>')
- 
-def about(request):
-	return HttpResponse('<h1>Наш клуб</h1>')
- 
-@csrf_exempt
-def auth(request):
-	try:
-		flag = request.POST['user_id']
-		# TODO use flag
-	except KeyError:
-		print ('Where is my flag?')
-	return HttpResponse('<h1>Авторизация</h1>')
+def is_first_login(request):
+	user = request.user
+	if(not user.is_anonymous):
+		if(user.is_first_login):
+			data = data_to_json(True)
+			return JsonResponse(data,safe=False)  
+		else:
+			if(user.telegramid and user.email):
+				data = data_to_json(False)
+				return JsonResponse(data,safe=False)
+			else:
+				data = data_to_json(True)
+				return JsonResponse(data,safe=False)
+	else:
+		data = data_to_json(False)
+		return JsonResponse(data,safe=False)
+
+def data_to_json(bool):
+	data = {"bool":bool}
+	return data
+
+def get_first_login(request):
+	if request.method == "POST":
+		email = request.POST.get('email')
+		tgid = request.POST.get('tgid')
+		User.objects.filter(id=request.user.id).update(telegramid=tgid,email=email,is_first_login=False)
+		return JsonResponse({"email": email}, status=200)
+	else:
+		errors = 'error'
+		print(errors)
+		return JsonResponse({"errors": errors}, status=400)
+

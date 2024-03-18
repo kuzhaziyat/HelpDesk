@@ -5,8 +5,8 @@ from .handler_bot import *
 def mailing_by_timer():
     print('сработало')
     for obj in User.objects.all():
-        # for task in Task.objects.filter(еxecutor = obj):
-            tasks = Task.objects.filter(еxecutor = obj).exclude(sostoyan = Task.SOSTOYAN_CHOISEC['Closed'])
+        # for task in Task.objects.filter(executor = obj):
+            tasks = Task.objects.filter(executor = obj).exclude(sostoyan = Task.SOSTOYAN_CHOISEC['Closed'])
             orgTasks = Task.objects.filter(organization = obj.organization)
             notPrinTasks = Task.objects.filter(organization = obj.organization, status = Task.STATUS_CHOISEC['Zapl'])
             sendMessageTG(obj.telegramid,

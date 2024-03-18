@@ -6,24 +6,22 @@ from .models import *
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    list_filter = ()
     list_display_links = ['id','last_name','first_name', 'oname']
     list_display = ['id','last_name','first_name', 'oname', 'department', 'username']
     fieldsets = (
         (None, {
-            'fields': ('username', 'password')
+            'fields': ('username', 'password','last_login')
         }),
         ('Персональная информация', {
             'fields': ('last_name','first_name', 'oname','email','telegramid')
         }),
         ('Место работы', {
-            'fields': ('organization','department','position','groups')
-        }),
-        ('Права доступа', {
-            'fields': (
-                'is_active',
-                )
+            'fields': ('organization','department','position','is_active','notes','groups')
         }),
     )
+
+    readonly_fields = ['organization']
 
     def save_model(self, request, obj, form,change):
         if form.is_valid():
@@ -94,5 +92,5 @@ class OrganizationAdmin(admin.ModelAdmin):
             return super(OrganizationAdmin, self).get_queryset(request)
         else:
             qs = super(OrganizationAdmin, self).get_queryset(request)
-            return qs.filter(name=request.user.organization)
+            return qs.filter(name=request.user.organization, is_active = True)
 
