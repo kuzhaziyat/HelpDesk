@@ -29,8 +29,12 @@ def get_first_login(request):
 	if request.method == "POST":
 		email = request.POST.get('email')
 		tgid = request.POST.get('tgid')
-		User.objects.filter(id=request.user.id).update(telegramid=tgid,email=email,is_first_login=False)
-		return JsonResponse({"email": email}, status=200)
+		if(email and tgid):
+			User.objects.filter(id=request.user.id).update(telegramid=tgid,email=email,is_first_login=False)
+			return JsonResponse({"bool": True}, status=200)
+		else:
+			print('false')
+			return JsonResponse({"bool": False}, status=200)
 	else:
 		errors = 'error'
 		print(errors)

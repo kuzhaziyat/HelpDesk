@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    readonly_fields = ['organization']
+    
 
     def save_model(self, request, obj, form,change):
         if form.is_valid():
